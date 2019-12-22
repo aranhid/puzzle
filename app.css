@@ -23,9 +23,6 @@ body {
     background-color: #fff;
     height: 100%;
     width: 100%;
-    display: grid;
-    grid-template-columns: repeat(9, 50px);
-    grid-template-rows: repeat(6, 50px);
 }
 
 .puzzleArea {
@@ -35,6 +32,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    box-sizing: border-box;
 }
 
 .puzzleGrid {
@@ -47,5 +45,11 @@ body {
     background-image: url("img/image-stripped.jpg");
     height: 50px;
     width: 50px;
-    /* position: absolute; */
+    position: absolute;
+}
+
+.gridCell {
+    background-color: #fff;
+    box-sizing: border-box;
+    border: 1px solid #707070;
 }
