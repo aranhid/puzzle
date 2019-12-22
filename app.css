@@ -1,0 +1,51 @@
+html {
+    height: 100%;
+}
+
+body {
+    margin: 0 0 0 0;
+    font-family: 'Roboto', sans-serif;
+    font: Bold 20px Roboto;
+    opacity: 1;
+    background-color: #fff;
+    height: 100%;
+    width: 100%;
+}
+
+.gameArea {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+.pieces {
+    background-color: #fff;
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(9, 50px);
+    grid-template-rows: repeat(6, 50px);
+}
+
+.puzzleArea {
+    background-color: #D2E9EE ;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.puzzleGrid {
+    display: grid;
+    grid-template-columns: repeat(9, 50px);
+    grid-template-rows: repeat(6, 50px);
+}
+
+.piece {
+    background-image: url("img/image-stripped.jpg");
+    height: 50px;
+    width: 50px;
+    /* position: absolute; */
+}
