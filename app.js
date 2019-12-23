@@ -35,6 +35,9 @@ function generatePieces() {
             puzzlePiece.addEventListener("mousedown", function () {
                 dragNdrop(event, puzzlePiece);
             })
+            puzzlePiece.addEventListener("touchstart", function () {
+                dragNdrop(event, puzzlePiece);
+            })
         }
     }
 }
@@ -58,7 +61,6 @@ function generatePuzzleGrid() {
 let currentDroppable = null;
 
 function dragNdrop(event, puzzlePiece) {
-
     let offsetX = event.clientX - puzzlePiece.getBoundingClientRect().left;
     let offsetY = event.clientY - puzzlePiece.getBoundingClientRect().top;
 
@@ -88,7 +90,12 @@ function dragNdrop(event, puzzlePiece) {
     }
 
     function onMouseMove(event) {
-        moveAt(event.pageX, event.pageY);
+        if (event.type == "mousemove")
+            moveAt(event.pageX, event.pageY);
+        if (event.type == "touchmove")
+        {
+            moveAt(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
+        }
 
         puzzlePiece.hidden = true;
         let elemBelow = document.elementFromPoint(event.clientX, event.clientY);
@@ -117,11 +124,14 @@ function dragNdrop(event, puzzlePiece) {
     }
 
     document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('touchmove', onMouseMove);
 
     puzzlePiece.addEventListener("mouseup", onMouseUp);
+    puzzlePiece.addEventListener('touchend', onMouseUp);
 
     function onMouseUp() {
         document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('touchmove', onMouseMove);
         if (currentDroppable) {
             if (currentDroppable.classList.contains("puzzleArea")) {
                 puzzlePieceRandomPosition(puzzlePiece);
@@ -134,6 +144,7 @@ function dragNdrop(event, puzzlePiece) {
             currentDroppable = null;
         }
         puzzlePiece.removeEventListener("mouseup", onMouseUp);
+        puzzlePiece.removeEventListener("touchend", onMouseUp);
     }
 
     puzzlePiece.ondragstart = function () {
