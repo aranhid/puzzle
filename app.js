@@ -61,8 +61,16 @@ function generatePuzzleGrid() {
 let currentDroppable = null;
 
 function dragNdrop(event, puzzlePiece) {
-    let offsetX = event.clientX - puzzlePiece.getBoundingClientRect().left;
-    let offsetY = event.clientY - puzzlePiece.getBoundingClientRect().top;
+    let offsetX;
+    let offsetY;
+    if (event.type == "mousedown") {
+        offsetX = event.clientX - puzzlePiece.getBoundingClientRect().left;
+        offsetY = event.clientY - puzzlePiece.getBoundingClientRect().top;
+    }
+    if (event.type == "touchstart") {
+        offsetX = event.targetTouches[0].pageX - puzzlePiece.getBoundingClientRect().left;
+        offsetY = event.targetTouches[0].pageY - puzzlePiece.getBoundingClientRect().top;
+    }
 
     puzzlePiece.style.position = 'absolute';
     puzzlePiece.style.zIndex = 1000;
@@ -92,13 +100,17 @@ function dragNdrop(event, puzzlePiece) {
     function onMouseMove(event) {
         if (event.type == "mousemove")
             moveAt(event.pageX, event.pageY);
-        if (event.type == "touchmove")
-        {
+        if (event.type == "touchmove") {
             moveAt(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
         }
 
         puzzlePiece.hidden = true;
-        let elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+        let elemBelow;
+        if (event.type == "mousemove")
+            elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+        if (event.type == "touchmove") {
+            elemBelow = document.elementFromPoint(event.targetTouches[0].pageX, event.targetTouches[0].pageY);
+        }
         puzzlePiece.hidden = false;
 
         if (!elemBelow) return;
