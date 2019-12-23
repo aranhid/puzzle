@@ -66,8 +66,25 @@ function dragNdrop(event, puzzlePiece) {
     puzzlePiece.style.zIndex = 1000;
 
     function moveAt(pageX, pageY) {
-        puzzlePiece.style.left = pageX - offsetX + 'px';
-        puzzlePiece.style.top = pageY - offsetY + 'px';
+        if (pageX <= offsetX) {
+            puzzlePiece.style.left = 0 + 'px';
+        }
+        else if (pageX >= document.documentElement.clientWidth - pieceWidth + offsetX) {
+            puzzlePiece.style.left = (document.documentElement.clientWidth - pieceWidth) + "px";
+        }
+        else {
+            puzzlePiece.style.left = pageX - offsetX + 'px';
+        }
+
+        if (pageY <= offsetY) {
+            puzzlePiece.style.top = 0 + "px";
+        }
+        else if (pageY >= document.documentElement.clientHeight - pieceHeight + offsetY) {
+            puzzlePiece.style.top = document.documentElement.clientHeight - pieceHeight + "px";
+        }
+        else {
+            puzzlePiece.style.top = pageY - offsetY + 'px';
+        }
     }
 
     function onMouseMove(event) {
