@@ -8,6 +8,27 @@ window.onload = function () {
     generatePieces();
     generatePuzzleGrid();
     setRandomPieceInGrid();
+    window.addEventListener("resize", resize);
+}
+
+function resize() {
+    let gameArea = document.querySelector(".gameArea");
+    let puzzlePieces = gameArea.querySelectorAll(".piece");
+    for (let i = 0; i < puzzlePieces.length; i++) {
+        puzzlePieceRandomPosition(puzzlePieces[i]);
+    }
+
+    let puzzleGrid = document.querySelector(".puzzleGrid");
+    for (let i = 0; i < isPieceSetInRightPlace.length; i++) {
+        if (isPieceSetInRightPlace[i]) {
+            let puzzlePiece = gameArea.querySelector('div[pieceid="' + i + '"]');
+            let gridCell = puzzleGrid.querySelector('div[gridcellid="' + i + '"]')
+            let testTop = gridCell.getBoundingClientRect().top;
+            let testLeft = gridCell.getBoundingClientRect().left;
+            puzzlePiece.style.top = testTop + "px";
+            puzzlePiece.style.left = testLeft + "px";
+        }
+    }
 }
 
 function setRandomPieceInGrid() {
