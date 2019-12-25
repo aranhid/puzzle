@@ -2,10 +2,24 @@ let imageHeight = 300;
 let imageWidth = 450;
 let pieceHeight = 50;
 let pieceWidth = 50;
+let isPieceSetInRightPlace = []
 
 window.onload = function () {
     generatePieces();
     generatePuzzleGrid();
+    setRandomPieceInGrid();
+}
+
+function setRandomPieceInGrid() {
+    let puzzlePieces = document.querySelectorAll(".piece");
+    let randomID = getRandomInRange(0, puzzlePieces.length - 1);
+    puzzlePiece = puzzlePieces[randomID];
+    isPieceSetInRightPlace[randomID] = true;
+
+    let puzzleGrid = document.querySelector(".puzzleGrid");
+    let gridCell = puzzleGrid.querySelector('div[gridcellid="' + puzzlePiece.getAttribute("pieceID") + '"]');
+    puzzlePiece.style.left = gridCell.getBoundingClientRect().left + pageXOffset + "px";
+    puzzlePiece.style.top = gridCell.getBoundingClientRect().top + pageYOffset + "px";
 }
 
 function getRandomInRange(min, max) {
@@ -23,12 +37,16 @@ function puzzlePieceRandomPosition(puzzlePiece) {
 function generatePieces() {
 
     let pieces = document.querySelector(".pieces");
-
+    let pieceID = 0;
     for (let y = 0; y < imageHeight; y += pieceHeight) {
         for (let x = 0; x < imageWidth; x += pieceWidth) {
             let puzzlePiece = document.createElement("div");
             pieces.appendChild(puzzlePiece);
+            puzzlePiece.setAttribute("pieceID", pieceID);
+            isPieceSetInRightPlace[pieceID] = false; 
+            pieceID++;
             puzzlePiece.classList.add("piece");
+            puzzlePiece.classList.add("droppable");
             puzzlePiece.style.backgroundPositionX = -x + "px";
             puzzlePiece.style.backgroundPositionY = -y + "px";
             puzzlePieceRandomPosition(puzzlePiece);
@@ -48,9 +66,12 @@ function generatePuzzleGrid() {
     puzzleGrid.style.gridTemplateColumns = "repeat(" + imageWidth / pieceWidth + ", " + pieceWidth + ")";
     puzzleGrid.style.gridTemplateRows = "repeat(" + imageHeight / pieceHeight + ", " + pieceHeight + ")";
 
+    let gridCellID = 0;
     for (let y = 0; y < imageHeight; y += pieceHeight) {
         for (let x = 0; x < imageWidth; x += pieceWidth) {
             let gridCell = document.createElement("div");
+            gridCell.setAttribute("gridCellID", gridCellID);
+            gridCellID++;
             gridCell.classList.add("gridCell");
             gridCell.classList.add("droppable");
             puzzleGrid.appendChild(gridCell);
@@ -61,6 +82,9 @@ function generatePuzzleGrid() {
 let currentDroppable = null;
 
 function dragNdrop(event, puzzlePiece) {
+    let previousPositionTop = puzzlePiece.getBoundingClientRect().top;
+    let previousPositionLeft = puzzlePiece.getBoundingClientRect().left;
+
     let offsetX;
     let offsetY;
     if (event.type == "mousedown") {
@@ -128,11 +152,16 @@ function dragNdrop(event, puzzlePiece) {
     }
 
     function enterDroppable(elem) {
-        elem.style.border = "3px solid skyblue"
+        if (!elem.classList.contains("piece")) {
+            if (elem.classList.contains("gridCell"))
+                elem.style.zIndex = 998;
+            elem.style.outline = "3px solid skyblue"
+        }
     }
 
     function leaveDroppable(elem) {
-        elem.style.border = "1px solid #707070";
+        elem.style.outline = "";
+        elem.style.zIndex = "";
     }
 
     document.addEventListener('mousemove', onMouseMove);
@@ -145,16 +174,21 @@ function dragNdrop(event, puzzlePiece) {
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('touchmove', onMouseMove);
         if (currentDroppable) {
-            if (currentDroppable.classList.contains("puzzleArea")) {
-                puzzlePieceRandomPosition(puzzlePiece);
-            } else {
+            let pieceID = puzzlePiece.getAttribute("pieceID");
+            if (currentDroppable.classList.contains("gridCell") && currentDroppable.getAttribute("gridCellID") === pieceID) {
                 puzzlePiece.style.left = currentDroppable.getBoundingClientRect().left + pageXOffset + "px";
                 puzzlePiece.style.top = currentDroppable.getBoundingClientRect().top + pageYOffset + "px";
-                puzzlePiece.style.zIndex = 0;
+                isPieceSetInRightPlace[pieceID] = true;
+                checkWin();
+            }
+            else {
+                puzzlePiece.style.left = previousPositionLeft + "px";
+                puzzlePiece.style.top = previousPositionTop + "px";
             }
             leaveDroppable(currentDroppable);
             currentDroppable = null;
         }
+        puzzlePiece.style.zIndex = 0;
         puzzlePiece.removeEventListener("mouseup", onMouseUp);
         puzzlePiece.removeEventListener("touchend", onMouseUp);
     }
@@ -162,4 +196,11 @@ function dragNdrop(event, puzzlePiece) {
     puzzlePiece.ondragstart = function () {
         return false;
     };
+}
+
+function checkWin(){
+    for (let i = 0; i<isPieceSetInRightPlace.length; i++)
+        if(!isPieceSetInRightPlace[i]) 
+            return;
+    alert("You have collected the puzzle!");
 }
