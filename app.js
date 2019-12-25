@@ -7,7 +7,7 @@ let isPieceSetInRightPlace = []
 window.onload = function () {
     generatePieces();
     generatePuzzleGrid();
-    setRandomPieceInGrid();
+    setRandomPieceInGrid(3);
     window.addEventListener("resize", resize);
 }
 
@@ -31,16 +31,20 @@ function resize() {
     }
 }
 
-function setRandomPieceInGrid() {
-    let puzzlePieces = document.querySelectorAll(".piece");
-    let randomID = getRandomInRange(0, puzzlePieces.length - 1);
-    puzzlePiece = puzzlePieces[randomID];
-    isPieceSetInRightPlace[randomID] = true;
+function setRandomPieceInGrid(count) {
+    for (let i = 0; i < count; i++) {
+        let puzzlePieces = document.querySelectorAll(".piece");
+        let randomID = getRandomInRange(0, puzzlePieces.length - 1);
+        puzzlePiece = puzzlePieces[randomID];
+        if (isPieceSetInRightPlace[randomID])
+            continue;
+        isPieceSetInRightPlace[randomID] = true;
 
-    let puzzleGrid = document.querySelector(".puzzleGrid");
-    let gridCell = puzzleGrid.querySelector('div[gridcellid="' + puzzlePiece.getAttribute("pieceID") + '"]');
-    puzzlePiece.style.left = gridCell.getBoundingClientRect().left + pageXOffset + "px";
-    puzzlePiece.style.top = gridCell.getBoundingClientRect().top + pageYOffset + "px";
+        let puzzleGrid = document.querySelector(".puzzleGrid");
+        let gridCell = puzzleGrid.querySelector('div[gridcellid="' + puzzlePiece.getAttribute("pieceID") + '"]');
+        puzzlePiece.style.left = gridCell.getBoundingClientRect().left + pageXOffset + "px";
+        puzzlePiece.style.top = gridCell.getBoundingClientRect().top + pageYOffset + "px";
+    }
 }
 
 function getRandomInRange(min, max) {
@@ -64,7 +68,7 @@ function generatePieces() {
             let puzzlePiece = document.createElement("div");
             pieces.appendChild(puzzlePiece);
             puzzlePiece.setAttribute("pieceID", pieceID);
-            isPieceSetInRightPlace[pieceID] = false; 
+            isPieceSetInRightPlace[pieceID] = false;
             pieceID++;
             puzzlePiece.classList.add("piece");
             puzzlePiece.classList.add("droppable");
@@ -219,9 +223,9 @@ function dragNdrop(event, puzzlePiece) {
     };
 }
 
-function checkWin(){
-    for (let i = 0; i<isPieceSetInRightPlace.length; i++)
-        if(!isPieceSetInRightPlace[i]) 
+function checkWin() {
+    for (let i = 0; i < isPieceSetInRightPlace.length; i++)
+        if (!isPieceSetInRightPlace[i])
             return;
     alert("You have collected the puzzle!");
 }
